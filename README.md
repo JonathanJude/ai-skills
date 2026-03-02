@@ -1,36 +1,70 @@
-# aiskill
+# aiskill 🧠🔗
 
-`aiskill` is a Node.js CLI that keeps a canonical local skills library and syncs skills into global skill directories for:
+`aiskill` is a Node.js CLI for managing one canonical skills library and syncing it to multiple AI coding agents.
+
+Supported agents:
 - Codex
 - Claude Code
 - OpenCode
 - Kilo Code
 
-By default it installs skills as symlinks (copy mode fallback supported).
+Default behavior:
+- Canonical source of truth in `~/ai-skills`
+- Install to agent skill directories via symlink
+- Copy mode available when symlink is not ideal
+
+## Why use it? 🚀
+- Keep skills in one place, reuse everywhere
+- Avoid manual copying across agent folders
+- Run health checks (`doctor`) to catch broken/orphaned installs
+- Safe defaults for conflict handling and uninstall flows
 
 ## Requirements
-- Node.js 20+
-- macOS or Linux for default symlink flow (Windows supported with copy-mode default)
+- Node.js `20+`
+- macOS/Linux recommended for default symlink flow
+- Windows supported (copy mode default is recommended)
 
-## Local install
+## Quick Start
 ```bash
 npm install
 npm link
 aiskill --help
 ```
 
-## Canonical layout
+Create and auto-install a skill:
+```bash
+aiskill new flutter-architect
+aiskill list
+```
+
+## Canonical Layout
 Default canonical root:
 - `~/ai-skills`
-- skills at `~/ai-skills/skills/<skillName>/SKILL.md`
+- Skill path: `~/ai-skills/skills/<skillName>/SKILL.md`
 
-Override root with env var:
+Override root:
 ```bash
 export AISkill_ROOT="~/my-skills-root"
 ```
 
-## Config
-Generated automatically on first run at:
+## What a skill looks like
+```text
+<skill-name>/
+  SKILL.md
+  references/   (optional)
+  scripts/      (optional)
+```
+
+`SKILL.md` includes YAML frontmatter for compatibility:
+```yaml
+---
+name: your-skill-name
+description: "Short summary of what the skill does"
+---
+```
+
+## Configuration ⚙️
+Generated automatically on first run:
 - `~/ai-skills/config.json` (or `<AISkill_ROOT>/config.json`)
 
 Example:
@@ -51,30 +85,33 @@ Example:
 }
 ```
 
+Tip:
+- If one agent does not pick up symlinks, set `"installMode": "copy"` or use `--mode copy`.
+
 ## Commands
 
-### Create
+### `new` (create skill)
 ```bash
 aiskill new flutter-architect
 aiskill new my-skill --template flutter --agents codex,claude
 aiskill new test-skill --no-install --with-references --with-scripts
 ```
 
-### Install / uninstall
+### `install` / `uninstall`
 ```bash
 aiskill install flutter-architect
 aiskill install flutter-architect --agents claude --mode copy --force
 aiskill uninstall flutter-architect --agents claude
 ```
 
-### Delete canonical skill
+### `delete` (canonical delete)
 ```bash
 aiskill delete flutter-architect
 aiskill delete flutter-architect --uninstall-first
 aiskill delete flutter-architect --force
 ```
 
-### Inspect
+### `list` / `status`
 ```bash
 aiskill list
 aiskill list --json
@@ -82,17 +119,32 @@ aiskill status flutter-architect
 aiskill status flutter-architect --json
 ```
 
-### Doctor
+### `doctor` 🩺
 ```bash
 aiskill doctor
 aiskill doctor --fix
 aiskill doctor --json
 ```
 
-### Edit
+### `edit` ✏️
 ```bash
 aiskill edit flutter-architect
 aiskill edit flutter-architect --file SKILL.md --editor code
+```
+
+## Typical Workflow
+```bash
+# 1) Create a new skill
+aiskill new api-reviewer
+
+# 2) Verify coverage
+aiskill list
+
+# 3) Update skill content
+aiskill edit api-reviewer
+
+# 4) Run health checks
+aiskill doctor
 ```
 
 ## Editor resolution order
@@ -104,18 +156,54 @@ aiskill edit flutter-architect --file SKILL.md --editor code
 6. `nano`
 7. `vi`
 
-## Safety behavior
-- Never deletes canonical skill on uninstall.
-- Refuses to remove unknown/non-managed targets unless `--force`.
-- `doctor --fix` requires interactive confirmations; non-interactive `--fix` refuses mutations.
+## Safety Rules
+- Never deletes canonical skill on `uninstall`
+- Refuses unknown/non-managed target removal unless `--force`
+- `doctor --fix` requires interactive confirmations
+- Non-interactive `doctor --fix` refuses mutations
 
-## Exit codes
+## Troubleshooting
+
+### Codex says SKILL.md frontmatter is missing
+Make sure `SKILL.md` starts with:
+```yaml
+---
+name: skill-name
+description: "..."
+---
+```
+
+### OpenCode/KiloCode do not show a skill
+- Check install status:
+```bash
+aiskill status your-skill
+```
+- Reinstall in copy mode:
+```bash
+aiskill uninstall your-skill --agents opencode,kilocode
+aiskill install your-skill --agents opencode,kilocode --mode copy --force
+```
+
+### Broken links or orphaned installs
+```bash
+aiskill doctor
+aiskill doctor --fix
+```
+
+## Exit Codes
 - `0` success
 - `1` operational failure
 - `2` invalid usage
 - `3` partial success
 
-## Test
+## Local Testing
 ```bash
 npm test
 ```
+
+## Publish Prep 📦
+Basic checklist before publishing:
+- Confirm package name availability (or use a scope like `@you/aiskill`)
+- Run tests: `npm test`
+- Check package contents: `npm pack --dry-run`
+- Publish: `npm publish --access public`
