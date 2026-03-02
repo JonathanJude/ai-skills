@@ -1,7 +1,7 @@
 const { Command, CommanderError } = require('commander');
 const { ensureConfig } = require('./core/config');
 const { EXIT_CODES, TOOL_NAME } = require('./core/constants');
-const { AISkillError } = require('./core/errors');
+const { AgentSkillsError } = require('./core/errors');
 const { error } = require('./core/logger');
 const { registerNewCommand } = require('./commands/new');
 const { registerInstallCommand } = require('./commands/install');
@@ -67,7 +67,7 @@ async function run(argv = process.argv) {
       return;
     }
 
-    if (err instanceof AISkillError) {
+    if (err instanceof AgentSkillsError) {
       error(err.message);
       if (err.details) {
         error(String(err.details));

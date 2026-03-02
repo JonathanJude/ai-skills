@@ -1,18 +1,18 @@
-class AISkillError extends Error {
+class AgentSkillsError extends Error {
   constructor(message, options = {}) {
     super(message);
-    this.name = 'AISkillError';
-    this.code = options.code || 'AISKILL_ERROR';
+    this.name = 'AgentSkillsError';
+    this.code = options.code || 'AGENTSKILLS_ERROR';
     this.exitCode = options.exitCode || 1;
     this.details = options.details;
   }
 }
 
 function usageError(message, details) {
-  return new AISkillError(message, { code: 'INVALID_USAGE', exitCode: 2, details });
+  return new AgentSkillsError(message, { code: 'INVALID_USAGE', exitCode: 2, details });
 }
 
 module.exports = {
-  AISkillError,
+  AgentSkillsError,
   usageError,
 };

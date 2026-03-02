@@ -1,7 +1,7 @@
 const { confirm } = require('@inquirer/prompts');
 const { ensureConfig, readConfig } = require('../core/config');
 const { AGENT_LABELS, DEFAULT_INSTALL_MODE } = require('../core/constants');
-const { AISkillError } = require('../core/errors');
+const { AgentSkillsError } = require('../core/errors');
 const { info, success, warn } = require('../core/logger');
 const {
   normalizeSkillName,
@@ -17,7 +17,7 @@ async function maybeFallbackToCopy(err, mode, skillName, agentKey, force) {
   }
 
   if (!isInteractive()) {
-    throw new AISkillError(
+    throw new AgentSkillsError(
       `Symlink failed for ${agentKey}. Re-run with --mode copy.`,
       { code: 'SYMLINK_FAILED', exitCode: 1 }
     );
@@ -47,7 +47,7 @@ async function handleInstallCommand(rawSkillName, options) {
 
   const mode = options.mode || config.defaults.installMode || DEFAULT_INSTALL_MODE;
   if (!['symlink', 'copy'].includes(mode)) {
-    throw new AISkillError('Mode must be symlink or copy', { code: 'INVALID_USAGE', exitCode: 2 });
+    throw new AgentSkillsError('Mode must be symlink or copy', { code: 'INVALID_USAGE', exitCode: 2 });
   }
 
   if (process.platform === 'win32' && mode === 'symlink') {

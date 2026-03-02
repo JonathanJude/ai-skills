@@ -14,7 +14,7 @@ function getAvailableEditors() {
 function resolveEditor(preferredEditor) {
   const candidates = [
     preferredEditor,
-    process.env.AISkill_EDITOR,
+    process.env.AGENTSKILLS_EDITOR,
     process.env.EDITOR,
     'code',
     'cursor',

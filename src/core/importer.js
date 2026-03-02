@@ -2,7 +2,7 @@ const fs = require('fs-extra');
 const os = require('os');
 const path = require('path');
 const AdmZip = require('adm-zip');
-const { AISkillError } = require('./errors');
+const { AgentSkillsError } = require('./errors');
 const { getCanonicalSkillPath } = require('./paths');
 const { normalizeSkillName, validateSkillName } = require('./validation');
 
@@ -26,26 +26,26 @@ function findSkillRootInDirectory(baseDir) {
   }
 
   if (entries.length > 1) {
-    throw new AISkillError(
+    throw new AgentSkillsError(
       `Source contains multiple skill directories. Pass --name and provide a single skill folder/zip with one SKILL.md.`,
       { code: 'INVALID_USAGE', exitCode: 2 }
     );
   }
 
-  throw new AISkillError('Could not find SKILL.md in source path.', {
+  throw new AgentSkillsError('Could not find SKILL.md in source path.', {
     code: 'INVALID_USAGE',
     exitCode: 2,
   });
 }
 
 function extractZipToTemp(zipPath) {
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'aiskill-import-'));
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'agentskills-import-'));
   try {
     const zip = new AdmZip(zipPath);
     zip.extractAllTo(tempDir, true);
   } catch (err) {
     fs.removeSync(tempDir);
-    throw new AISkillError(`Failed to extract zip: ${err.message}`, {
+    throw new AgentSkillsError(`Failed to extract zip: ${err.message}`, {
       code: 'INVALID_USAGE',
       exitCode: 2,
     });
@@ -99,7 +99,7 @@ function ensureFrontmatter(skillMdPath, skillName) {
 function importSkillFromSource(sourcePath, options = {}) {
   const resolvedSource = path.resolve(sourcePath);
   if (!fs.existsSync(resolvedSource)) {
-    throw new AISkillError(`Source does not exist: ${resolvedSource}`, {
+    throw new AgentSkillsError(`Source does not exist: ${resolvedSource}`, {
       code: 'INVALID_USAGE',
       exitCode: 2,
     });
@@ -115,7 +115,7 @@ function importSkillFromSource(sourcePath, options = {}) {
     } else {
       const stat = fs.lstatSync(resolvedSource);
       if (!stat.isDirectory()) {
-        throw new AISkillError('Source must be a directory or .zip file.', {
+        throw new AgentSkillsError('Source must be a directory or .zip file.', {
           code: 'INVALID_USAGE',
           exitCode: 2,
         });
@@ -128,7 +128,7 @@ function importSkillFromSource(sourcePath, options = {}) {
 
     if (fs.existsSync(canonicalPath)) {
       if (!options.force) {
-        throw new AISkillError(`Canonical skill already exists: ${canonicalPath}. Use --force to replace it.`, {
+        throw new AgentSkillsError(`Canonical skill already exists: ${canonicalPath}. Use --force to replace it.`, {
           code: 'ALREADY_EXISTS',
           exitCode: 1,
         });
@@ -144,7 +144,7 @@ function importSkillFromSource(sourcePath, options = {}) {
 
     const skillMdPath = path.join(canonicalPath, 'SKILL.md');
     if (!fs.existsSync(skillMdPath)) {
-      throw new AISkillError(`Imported source is invalid; missing SKILL.md at ${skillMdPath}`, {
+      throw new AgentSkillsError(`Imported source is invalid; missing SKILL.md at ${skillMdPath}`, {
         code: 'INVALID_USAGE',
         exitCode: 2,
       });
@@ -152,7 +152,7 @@ function importSkillFromSource(sourcePath, options = {}) {
 
     const frontmatterResult = ensureFrontmatter(skillMdPath, importedName);
 
-    const markerPath = path.join(canonicalPath, '.aiskill.json');
+    const markerPath = path.join(canonicalPath, '.agentskills.json');
     if (!fs.existsSync(markerPath)) {
       fs.writeJsonSync(markerPath, {
         createdAt: new Date().toISOString(),

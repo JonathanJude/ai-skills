@@ -25,7 +25,7 @@ function expandPathHome(pathStr) {
 }
 
 function resolveRootRaw() {
-  return process.env.AISkill_ROOT || DEFAULT_CANONICAL_ROOT;
+  return process.env.AGENTSKILLS_ROOT || DEFAULT_CANONICAL_ROOT;
 }
 
 function resolveRoot() {

@@ -120,7 +120,7 @@ function getSkillStatus(skillName) {
   const config = readConfig();
   const canonicalPath = getCanonicalSkillPath(skillName);
   const skillMdPath = path.join(canonicalPath, 'SKILL.md');
-  const markerPath = path.join(canonicalPath, '.aiskill.json');
+  const markerPath = path.join(canonicalPath, '.agentskills.json');
 
   const canonicalExists = fs.existsSync(canonicalPath);
   const hasSkillMd = fs.existsSync(skillMdPath);

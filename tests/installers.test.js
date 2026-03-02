@@ -10,7 +10,7 @@ const {
 } = require('../src/core/installers');
 
 function makeTempRoot() {
-  return fs.mkdtempSync(path.join(os.tmpdir(), 'aiskill-test-'));
+  return fs.mkdtempSync(path.join(os.tmpdir(), 'agentskills-test-'));
 }
 
 describe('installers', () => {
@@ -21,10 +21,10 @@ describe('installers', () => {
 
   beforeEach(() => {
     tempRoot = makeTempRoot();
-    prevRoot = process.env.AISkill_ROOT;
+    prevRoot = process.env.AGENTSKILLS_ROOT;
     prevHome = process.env.HOME;
     prevUserProfile = process.env.USERPROFILE;
-    process.env.AISkill_ROOT = path.join(tempRoot, 'canonical');
+    process.env.AGENTSKILLS_ROOT = path.join(tempRoot, 'canonical');
     process.env.HOME = path.join(tempRoot, 'home');
     process.env.USERPROFILE = process.env.HOME;
     fs.ensureDirSync(process.env.HOME);
@@ -36,8 +36,8 @@ describe('installers', () => {
   });
 
   afterEach(() => {
-    if (prevRoot === undefined) delete process.env.AISkill_ROOT;
-    else process.env.AISkill_ROOT = prevRoot;
+    if (prevRoot === undefined) delete process.env.AGENTSKILLS_ROOT;
+    else process.env.AGENTSKILLS_ROOT = prevRoot;
     if (prevHome === undefined) delete process.env.HOME;
     else process.env.HOME = prevHome;
     if (prevUserProfile === undefined) delete process.env.USERPROFILE;

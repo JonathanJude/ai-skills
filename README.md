@@ -1,6 +1,6 @@
-# aiskill 🧠🔗
+# agentskills 🧠🔗
 
-`aiskill` is a Node.js CLI for managing one canonical skills library and syncing it to multiple AI coding agents.
+`agentskills` is both the npm package and CLI command for managing one canonical skills library and syncing it to multiple AI coding agents.
 
 Supported agents:
 - Codex
@@ -9,7 +9,7 @@ Supported agents:
 - Kilo Code
 
 Default behavior:
-- Canonical source of truth in `~/ai-skills`
+- Canonical source of truth in `~/agent-skills`
 - Install to agent skill directories via symlink
 - Copy mode available when symlink is not ideal
 
@@ -28,23 +28,23 @@ Default behavior:
 ```bash
 npm install
 npm link
-aiskill --help
+agentskills --help
 ```
 
 Create and auto-install a skill:
 ```bash
-aiskill new flutter-architect
-aiskill list
+agentskills new flutter-architect
+agentskills list
 ```
 
 ## Canonical Layout
 Default canonical root:
-- `~/ai-skills`
-- Skill path: `~/ai-skills/skills/<skillName>/SKILL.md`
+- `~/agent-skills`
+- Skill path: `~/agent-skills/skills/<skillName>/SKILL.md`
 
 Override root:
 ```bash
-export AISkill_ROOT="~/my-skills-root"
+export AGENTSKILLS_ROOT="~/my-skills-root"
 ```
 
 ## What a skill looks like
@@ -65,12 +65,12 @@ description: "Short summary of what the skill does"
 
 ## Configuration ⚙️
 Generated automatically on first run:
-- `~/ai-skills/config.json` (or `<AISkill_ROOT>/config.json`)
+- `~/agent-skills/config.json` (or `<AGENTSKILLS_ROOT>/config.json`)
 
 Example:
 ```json
 {
-  "canonicalRoot": "~/ai-skills",
+  "canonicalRoot": "~/agent-skills",
   "skillsDirName": "skills",
   "agents": {
     "codex": { "enabled": true, "skillsDir": "~/.codex/skills" },
@@ -92,82 +92,82 @@ Tip:
 
 ### `new` (create skill)
 ```bash
-aiskill new flutter-architect
-aiskill new my-skill --template flutter --agents codex,claude
-aiskill new test-skill --no-install --with-references --with-scripts
+agentskills new flutter-architect
+agentskills new my-skill --template flutter --agents codex,claude
+agentskills new test-skill --no-install --with-references --with-scripts
 ```
 
 ### `add` (import existing skill from folder/zip) 📥
 ```bash
 # Import from a folder
-aiskill add ./my-existing-skill
+agentskills add ./my-existing-skill
 
 # Import from a zip and sync only to selected agents
-aiskill add ./my-existing-skill.zip --agents codex,claude
+agentskills add ./my-existing-skill.zip --agents codex,claude
 
 # Override imported name and force replace
-aiskill add ./skills/legacy-reviewer --name reviewer-v2 --force
+agentskills add ./skills/legacy-reviewer --name reviewer-v2 --force
 ```
 
 Note:
-- If imported `SKILL.md` has no YAML frontmatter, `aiskill` auto-injects a generic frontmatter block and prints a warning so you can review/edit it.
+- If imported `SKILL.md` has no YAML frontmatter, `agentskills` auto-injects a generic frontmatter block and prints a warning so you can review/edit it.
 
 ### `install` / `uninstall`
 ```bash
-aiskill install flutter-architect
-aiskill install flutter-architect --agents claude --mode copy --force
-aiskill uninstall flutter-architect --agents claude
+agentskills install flutter-architect
+agentskills install flutter-architect --agents claude --mode copy --force
+agentskills uninstall flutter-architect --agents claude
 ```
 
 ### `delete` (canonical delete)
 ```bash
-aiskill delete flutter-architect
-aiskill delete flutter-architect --uninstall-first
-aiskill delete flutter-architect --force
+agentskills delete flutter-architect
+agentskills delete flutter-architect --uninstall-first
+agentskills delete flutter-architect --force
 ```
 
 ### `list` / `status`
 ```bash
-aiskill list
-aiskill list --json
-aiskill status flutter-architect
-aiskill status flutter-architect --json
+agentskills list
+agentskills list --json
+agentskills status flutter-architect
+agentskills status flutter-architect --json
 ```
 
 ### `doctor` 🩺
 ```bash
-aiskill doctor
-aiskill doctor --fix
-aiskill doctor --json
+agentskills doctor
+agentskills doctor --fix
+agentskills doctor --json
 ```
 
 ### `edit` ✏️
 ```bash
-aiskill edit flutter-architect
-aiskill edit flutter-architect --file SKILL.md --editor code
+agentskills edit flutter-architect
+agentskills edit flutter-architect --file SKILL.md --editor code
 ```
 
 ## Typical Workflow
 ```bash
 # 1) Create a new skill
-aiskill new api-reviewer
+agentskills new api-reviewer
 
 # 2) Import an existing skill from another repo/archive
-aiskill add ./downloaded-skills/security-audit.zip
+agentskills add ./downloaded-skills/security-audit.zip
 
 # 3) Verify coverage
-aiskill list
+agentskills list
 
 # 4) Update skill content
-aiskill edit api-reviewer
+agentskills edit api-reviewer
 
 # 5) Run health checks
-aiskill doctor
+agentskills doctor
 ```
 
 ## Editor resolution order
 1. `--editor`
-2. `$AISkill_EDITOR`
+2. `$AGENTSKILLS_EDITOR`
 3. `$EDITOR`
 4. `code`
 5. `cursor`
@@ -191,33 +191,33 @@ description: "..."
 ---
 ```
 
-If you imported with `aiskill add`, missing frontmatter is auto-added for you. Review it with:
+If you imported with `agentskills add`, missing frontmatter is auto-added for you. Review it with:
 ```bash
-aiskill edit your-skill
+agentskills edit your-skill
 ```
 
 ### OpenCode/KiloCode do not show a skill
 - Check install status:
 ```bash
-aiskill status your-skill
+agentskills status your-skill
 ```
 - Reinstall in copy mode:
 ```bash
-aiskill uninstall your-skill --agents opencode,kilocode
-aiskill install your-skill --agents opencode,kilocode --mode copy --force
+agentskills uninstall your-skill --agents opencode,kilocode
+agentskills install your-skill --agents opencode,kilocode --mode copy --force
 ```
 
 ### Import from zip/folder fails
 - Verify source contains exactly one valid skill root with `SKILL.md`
 - Try explicit naming if folder names are messy:
 ```bash
-aiskill add ./incoming/archive.zip --name clean-skill-name
+agentskills add ./incoming/archive.zip --name clean-skill-name
 ```
 
 ### Broken links or orphaned installs
 ```bash
-aiskill doctor
-aiskill doctor --fix
+agentskills doctor
+agentskills doctor --fix
 ```
 
 ## Exit Codes
@@ -233,7 +233,7 @@ npm test
 
 ## Publish Prep 📦
 Basic checklist before publishing:
-- Confirm package name availability (or use a scope like `@you/aiskill`)
+- Confirm package name availability (or use a scope like `@you/agentskills`)
 - Run tests: `npm test`
 - Check package contents: `npm pack --dry-run`
 - Publish: `npm publish --access public`

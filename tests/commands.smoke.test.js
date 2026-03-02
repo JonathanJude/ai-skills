@@ -4,11 +4,11 @@ const fs = require('fs-extra');
 const { spawnSync } = require('child_process');
 
 function makeTempRoot() {
-  return fs.mkdtempSync(path.join(os.tmpdir(), 'aiskill-cli-'));
+  return fs.mkdtempSync(path.join(os.tmpdir(), 'agentskills-cli-'));
 }
 
 function runCli(args, env) {
-  return spawnSync('node', ['bin/aiskill.js', ...args], {
+  return spawnSync('node', ['bin/agentskills.js', ...args], {
     cwd: path.resolve(__dirname, '..'),
     env,
     encoding: 'utf8',
@@ -27,7 +27,7 @@ describe('CLI smoke', () => {
 
     env = {
       ...process.env,
-      AISkill_ROOT: root,
+      AGENTSKILLS_ROOT: root,
       HOME: home,
       USERPROFILE: home,
       FORCE_COLOR: '0',
@@ -42,7 +42,7 @@ describe('CLI smoke', () => {
     const created = runCli(['new', 'flutter-architect'], env);
     expect(created.status).toBe(0);
 
-    const skillMd = path.join(env.AISkill_ROOT, 'skills', 'flutter-architect', 'SKILL.md');
+    const skillMd = path.join(env.AGENTSKILLS_ROOT, 'skills', 'flutter-architect', 'SKILL.md');
     expect(fs.existsSync(skillMd)).toBe(true);
     const skillMdContent = fs.readFileSync(skillMd, 'utf8');
     expect(skillMdContent.startsWith('---\n')).toBe(true);
@@ -70,7 +70,7 @@ describe('CLI smoke', () => {
     const added = runCli(['add', sourceSkill], env);
     expect(added.status).toBe(0);
 
-    const canonicalSkill = path.join(env.AISkill_ROOT, 'skills', 'team-reviewer', 'SKILL.md');
+    const canonicalSkill = path.join(env.AGENTSKILLS_ROOT, 'skills', 'team-reviewer', 'SKILL.md');
     expect(fs.existsSync(canonicalSkill)).toBe(true);
 
     const codexTarget = path.join(env.HOME, '.codex', 'skills', 'team-reviewer');
@@ -89,7 +89,7 @@ describe('CLI smoke', () => {
     expect(added.status).toBe(0);
     expect(added.stderr).toContain('Added a generic frontmatter block automatically');
 
-    const canonicalSkill = path.join(env.AISkill_ROOT, 'skills', 'no-frontmatter', 'SKILL.md');
+    const canonicalSkill = path.join(env.AGENTSKILLS_ROOT, 'skills', 'no-frontmatter', 'SKILL.md');
     const content = fs.readFileSync(canonicalSkill, 'utf8');
     expect(content.startsWith('---\n')).toBe(true);
     expect(content).toContain('name: no-frontmatter');

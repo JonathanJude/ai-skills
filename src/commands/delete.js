@@ -1,7 +1,7 @@
 const fs = require('fs-extra');
 const { confirm } = require('@inquirer/prompts');
 const { ensureConfig } = require('../core/config');
-const { AISkillError } = require('../core/errors');
+const { AgentSkillsError } = require('../core/errors');
 const { info, success, warn } = require('../core/logger');
 const {
   normalizeSkillName,
@@ -39,7 +39,7 @@ async function handleDeleteCommand(rawSkillName, options) {
 
   const canonicalPath = getCanonicalSkillPath(skillName);
   if (!fs.existsSync(canonicalPath)) {
-    throw new AISkillError(`Canonical skill does not exist: ${canonicalPath}`, {
+    throw new AgentSkillsError(`Canonical skill does not exist: ${canonicalPath}`, {
       code: 'NOT_FOUND',
       exitCode: 1,
     });
@@ -54,7 +54,7 @@ async function handleDeleteCommand(rawSkillName, options) {
   if (installedAgents.length > 0 && !shouldUninstallFirst && !options.force) {
     shouldUninstallFirst = await maybeConfirmUninstallFirst(skillName, installedAgents);
     if (!shouldUninstallFirst) {
-      throw new AISkillError(
+      throw new AgentSkillsError(
         `Refusing to delete while still installed. Re-run with --uninstall-first or --force.`,
         { code: 'DELETE_BLOCKED', exitCode: 1 }
       );
@@ -81,7 +81,7 @@ async function handleDeleteCommand(rawSkillName, options) {
     const stillInstalled = installedAgentsFromStatus(refreshed);
 
     if (stillInstalled.length > 0 && !options.force) {
-      throw new AISkillError(
+      throw new AgentSkillsError(
         `Still installed on: ${stillInstalled.join(', ')}. Use --force to delete anyway.`,
         { code: 'DELETE_BLOCKED', exitCode: uninstallCode === 0 ? 1 : uninstallCode }
       );

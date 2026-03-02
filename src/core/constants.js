@@ -7,7 +7,7 @@ const AGENT_LABELS = {
   kilocode: 'Kilo Code',
 };
 
-const DEFAULT_CANONICAL_ROOT = '~/ai-skills';
+const DEFAULT_CANONICAL_ROOT = '~/agent-skills';
 const DEFAULT_SKILLS_DIR_NAME = 'skills';
 
 const DEFAULT_AGENT_SKILLS_DIRS = {
@@ -17,7 +17,7 @@ const DEFAULT_AGENT_SKILLS_DIRS = {
   kilocode: '~/.kilocode/skills',
 };
 
-const TOOL_NAME = 'aiskill';
+const TOOL_NAME = 'agentskills';
 const DEFAULT_INSTALL_MODE = process.platform === 'win32' ? 'copy' : 'symlink';
 
 const DEFAULT_CONFIG = {

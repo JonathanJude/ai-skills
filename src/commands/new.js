@@ -3,7 +3,7 @@ const path = require('path');
 const { input, confirm, checkbox } = require('@inquirer/prompts');
 const { ensureConfig, readConfig } = require('../core/config');
 const { AGENT_KEYS, AGENT_LABELS, DEFAULT_INSTALL_MODE } = require('../core/constants');
-const { AISkillError } = require('../core/errors');
+const { AgentSkillsError } = require('../core/errors');
 const { info, success, warn } = require('../core/logger');
 const { renderSkillTemplate } = require('../core/skill-template');
 const {
@@ -97,7 +97,7 @@ async function maybeFallbackToCopy(err, mode, skillName, agentKey, force) {
   }
 
   if (!isInteractive()) {
-    throw new AISkillError(
+    throw new AgentSkillsError(
       `Symlink failed for ${agentKey}. Rerun with --mode copy or use install command in copy mode.`,
       { code: 'SYMLINK_FAILED', exitCode: 1 }
     );
@@ -126,7 +126,7 @@ async function handleNewCommand(rawSkillName, options) {
     });
 
     if (!shouldUse) {
-      throw new AISkillError('Skill name normalization rejected by user', {
+      throw new AgentSkillsError('Skill name normalization rejected by user', {
         code: 'INVALID_USAGE',
         exitCode: 2,
       });
@@ -142,7 +142,7 @@ async function handleNewCommand(rawSkillName, options) {
 
   const skillPath = getCanonicalSkillPath(skillName);
   if (fs.existsSync(skillPath)) {
-    throw new AISkillError(`Skill already exists: ${skillPath}`, { code: 'ALREADY_EXISTS', exitCode: 1 });
+    throw new AgentSkillsError(`Skill already exists: ${skillPath}`, { code: 'ALREADY_EXISTS', exitCode: 1 });
   }
 
   const templateData = await collectTemplateData(skillName, options);
@@ -173,7 +173,7 @@ async function handleNewCommand(rawSkillName, options) {
     fs.ensureDirSync(path.join(skillPath, 'scripts'));
   }
 
-  fs.writeJsonSync(path.join(skillPath, '.aiskill.json'), {
+  fs.writeJsonSync(path.join(skillPath, '.agentskills.json'), {
     createdAt: new Date().toISOString(),
     toolVersion: require('../../package.json').version,
     description: templateData.purpose,

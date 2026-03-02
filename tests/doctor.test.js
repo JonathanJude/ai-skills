@@ -6,7 +6,7 @@ const { getCanonicalSkillPath, getAgentSkillsDir, getAgentSkillTarget } = requir
 const { doctor, collectDoctorReport } = require('../src/core/doctor');
 
 function makeTempRoot() {
-  return fs.mkdtempSync(path.join(os.tmpdir(), 'aiskill-doctor-'));
+  return fs.mkdtempSync(path.join(os.tmpdir(), 'agentskills-doctor-'));
 }
 
 describe('doctor', () => {
@@ -17,11 +17,11 @@ describe('doctor', () => {
 
   beforeEach(() => {
     tempRoot = makeTempRoot();
-    prevRoot = process.env.AISkill_ROOT;
+    prevRoot = process.env.AGENTSKILLS_ROOT;
     prevHome = process.env.HOME;
     prevUserProfile = process.env.USERPROFILE;
 
-    process.env.AISkill_ROOT = path.join(tempRoot, 'canonical');
+    process.env.AGENTSKILLS_ROOT = path.join(tempRoot, 'canonical');
     process.env.HOME = path.join(tempRoot, 'home');
     process.env.USERPROFILE = process.env.HOME;
 
@@ -34,8 +34,8 @@ describe('doctor', () => {
   });
 
   afterEach(() => {
-    if (prevRoot === undefined) delete process.env.AISkill_ROOT;
-    else process.env.AISkill_ROOT = prevRoot;
+    if (prevRoot === undefined) delete process.env.AGENTSKILLS_ROOT;
+    else process.env.AGENTSKILLS_ROOT = prevRoot;
     if (prevHome === undefined) delete process.env.HOME;
     else process.env.HOME = prevHome;
     if (prevUserProfile === undefined) delete process.env.USERPROFILE;

@@ -20,7 +20,7 @@ function expandHome(pathStr) {
 }
 
 function resolveCanonicalRoot() {
-  return path.resolve(expandHome(process.env.AISkill_ROOT || DEFAULT_CANONICAL_ROOT));
+  return path.resolve(expandHome(process.env.AGENTSKILLS_ROOT || DEFAULT_CANONICAL_ROOT));
 }
 
 function getCanonicalSkillsDir() {

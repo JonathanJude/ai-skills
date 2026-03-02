@@ -6,7 +6,7 @@ const {
   getAgentSkillsDir,
   getAgentSkillTarget,
 } = require('./paths');
-const { AISkillError } = require('./errors');
+const { AgentSkillsError } = require('./errors');
 
 function resolveSymlinkAbsolute(linkPath, rawLinkTarget) {
   if (path.isAbsolute(rawLinkTarget)) {
@@ -49,7 +49,7 @@ function detectInstallMode(agentTargetPath) {
 
 function isManagedCopyTarget(targetPath, canonicalPath) {
   const targetSkillMd = path.join(targetPath, 'SKILL.md');
-  const targetMarker = path.join(targetPath, '.aiskill.json');
+  const targetMarker = path.join(targetPath, '.agentskills.json');
 
   if (fs.existsSync(targetMarker)) {
     return true;
@@ -76,7 +76,7 @@ function assertCanonicalSkillExists(skillName) {
   const skillMdPath = path.join(canonicalPath, 'SKILL.md');
 
   if (!fs.existsSync(canonicalPath) || !fs.existsSync(skillMdPath)) {
-    throw new AISkillError(
+    throw new AgentSkillsError(
       `Canonical skill is missing or invalid: ${canonicalPath}`,
       { code: 'MISSING_CANONICAL', exitCode: 1 }
     );
@@ -109,7 +109,7 @@ function installSkillToAgent(skillName, agentKey, mode, force = false) {
       }
 
       if (!force) {
-        throw new AISkillError(
+        throw new AgentSkillsError(
           `Target is a symlink to a different location: ${targetPath}`,
           { code: 'CONFLICTING_TARGET', exitCode: 1 }
         );
@@ -118,7 +118,7 @@ function installSkillToAgent(skillName, agentKey, mode, force = false) {
       fs.removeSync(targetPath);
     } else {
       if (!force) {
-        throw new AISkillError(
+        throw new AgentSkillsError(
           `Target already exists and is not a managed symlink: ${targetPath}`,
           { code: 'CONFLICTING_TARGET', exitCode: 1 }
         );
@@ -142,7 +142,7 @@ function installSkillToAgent(skillName, agentKey, mode, force = false) {
     const linkType = process.platform === 'win32' ? 'junction' : 'dir';
     fs.symlinkSync(canonicalPath, targetPath, linkType);
   } catch (err) {
-    throw new AISkillError(
+    throw new AgentSkillsError(
       `Failed to create symlink at ${targetPath}: ${err.message}`,
       { code: 'SYMLINK_FAILED', exitCode: 1, details: err.message }
     );
@@ -176,7 +176,7 @@ function uninstallSkillFromAgent(skillName, agentKey, force = false) {
     const resolvedLink = resolveSymlinkAbsolute(targetPath, rawLink);
 
     if (path.resolve(resolvedLink) !== path.resolve(canonicalPath) && !force) {
-      throw new AISkillError(
+      throw new AgentSkillsError(
         `Refusing to remove symlink not pointing to canonical skill: ${targetPath}`,
         { code: 'UNMANAGED_TARGET', exitCode: 1 }
       );
@@ -194,7 +194,7 @@ function uninstallSkillFromAgent(skillName, agentKey, force = false) {
 
   const managedCopy = isManagedCopyTarget(targetPath, canonicalPath);
   if (!managedCopy && !force) {
-    throw new AISkillError(
+    throw new AgentSkillsError(
       `Refusing to remove non-managed directory/file: ${targetPath}`,
       { code: 'UNMANAGED_TARGET', exitCode: 1 }
     );
