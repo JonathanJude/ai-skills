@@ -1,6 +1,6 @@
 {
   "name": "agentskills",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "description": "Global AI skills sync CLI for Codex, Claude Code, Kilo Code, and OpenCode",
   "bin": {
     "agentskills": "bin/agentskills.js"
@@ -21,7 +21,7 @@
     "opencode",
     "kilocode"
   ],
-  "author": "",
+  "author": "Jude Jonathan",
   "license": "MIT",
   "dependencies": {
     "@inquirer/prompts": "^8.0.0",
@@ -32,5 +32,16 @@
   },
   "devDependencies": {
     "vitest": "^3.2.4"
+  },
+  "homepage": "https://github.com/JonathanJude/agentskills",
+  "bugs": {
+    "url": "https://github.com/JonathanJude/agentskills/issues/new"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JonathanJude/agentskills"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
