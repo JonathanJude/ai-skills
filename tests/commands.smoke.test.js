@@ -59,6 +59,42 @@ describe('CLI smoke', () => {
     expect(statusJson.skillName).toBe('flutter-architect');
   });
 
+  it('add imports a skill folder and syncs by default', () => {
+    const sourceSkill = path.join(tempRoot, 'incoming-skill', 'team-reviewer');
+    fs.ensureDirSync(sourceSkill);
+    fs.writeFileSync(
+      path.join(sourceSkill, 'SKILL.md'),
+      '---\nname: team-reviewer\ndescription: \"imported\"\n---\n\n# Skill: Team Reviewer\n'
+    );
+
+    const added = runCli(['add', sourceSkill], env);
+    expect(added.status).toBe(0);
+
+    const canonicalSkill = path.join(env.AISkill_ROOT, 'skills', 'team-reviewer', 'SKILL.md');
+    expect(fs.existsSync(canonicalSkill)).toBe(true);
+
+    const codexTarget = path.join(env.HOME, '.codex', 'skills', 'team-reviewer');
+    expect(fs.existsSync(codexTarget)).toBe(true);
+  });
+
+  it('add auto-injects frontmatter for imported skill without YAML', () => {
+    const sourceSkill = path.join(tempRoot, 'incoming-skill', 'no-frontmatter');
+    fs.ensureDirSync(sourceSkill);
+    fs.writeFileSync(
+      path.join(sourceSkill, 'SKILL.md'),
+      '# Skill: No Frontmatter\n\nplain body\n'
+    );
+
+    const added = runCli(['add', sourceSkill, '--no-install'], env);
+    expect(added.status).toBe(0);
+    expect(added.stderr).toContain('Added a generic frontmatter block automatically');
+
+    const canonicalSkill = path.join(env.AISkill_ROOT, 'skills', 'no-frontmatter', 'SKILL.md');
+    const content = fs.readFileSync(canonicalSkill, 'utf8');
+    expect(content.startsWith('---\n')).toBe(true);
+    expect(content).toContain('name: no-frontmatter');
+  });
+
   it('uninstall/install lifecycle works for selected agent', () => {
     expect(runCli(['new', 'flutter-architect'], env).status).toBe(0);
 

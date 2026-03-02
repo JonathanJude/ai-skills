@@ -97,6 +97,21 @@ aiskill new my-skill --template flutter --agents codex,claude
 aiskill new test-skill --no-install --with-references --with-scripts
 ```
 
+### `add` (import existing skill from folder/zip) 📥
+```bash
+# Import from a folder
+aiskill add ./my-existing-skill
+
+# Import from a zip and sync only to selected agents
+aiskill add ./my-existing-skill.zip --agents codex,claude
+
+# Override imported name and force replace
+aiskill add ./skills/legacy-reviewer --name reviewer-v2 --force
+```
+
+Note:
+- If imported `SKILL.md` has no YAML frontmatter, `aiskill` auto-injects a generic frontmatter block and prints a warning so you can review/edit it.
+
 ### `install` / `uninstall`
 ```bash
 aiskill install flutter-architect
@@ -137,13 +152,16 @@ aiskill edit flutter-architect --file SKILL.md --editor code
 # 1) Create a new skill
 aiskill new api-reviewer
 
-# 2) Verify coverage
+# 2) Import an existing skill from another repo/archive
+aiskill add ./downloaded-skills/security-audit.zip
+
+# 3) Verify coverage
 aiskill list
 
-# 3) Update skill content
+# 4) Update skill content
 aiskill edit api-reviewer
 
-# 4) Run health checks
+# 5) Run health checks
 aiskill doctor
 ```
 
@@ -173,6 +191,11 @@ description: "..."
 ---
 ```
 
+If you imported with `aiskill add`, missing frontmatter is auto-added for you. Review it with:
+```bash
+aiskill edit your-skill
+```
+
 ### OpenCode/KiloCode do not show a skill
 - Check install status:
 ```bash
@@ -182,6 +205,13 @@ aiskill status your-skill
 ```bash
 aiskill uninstall your-skill --agents opencode,kilocode
 aiskill install your-skill --agents opencode,kilocode --mode copy --force
+```
+
+### Import from zip/folder fails
+- Verify source contains exactly one valid skill root with `SKILL.md`
+- Try explicit naming if folder names are messy:
+```bash
+aiskill add ./incoming/archive.zip --name clean-skill-name
 ```
 
 ### Broken links or orphaned installs

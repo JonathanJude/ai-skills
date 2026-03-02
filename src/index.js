@@ -5,6 +5,7 @@ const { AISkillError } = require('./core/errors');
 const { error } = require('./core/logger');
 const { registerNewCommand } = require('./commands/new');
 const { registerInstallCommand } = require('./commands/install');
+const { registerAddCommand } = require('./commands/add');
 const { registerUninstallCommand } = require('./commands/uninstall');
 const { registerDeleteCommand } = require('./commands/delete');
 const { registerListCommand } = require('./commands/list');
@@ -26,6 +27,7 @@ function createProgram() {
     .allowUnknownOption(false);
 
   registerNewCommand(program);
+  registerAddCommand(program);
   registerInstallCommand(program);
   registerUninstallCommand(program);
   registerDeleteCommand(program);
